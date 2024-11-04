@@ -34,7 +34,6 @@ object Question9 {
       when(col("stock_quantity")>100,"Overstocked")
         .when(col("stock_quantity")>50 && col("stock_quantity")<=100,"Normal")
         .otherwise("Low Stock").alias("category"))
-
     category.groupBy("category").agg(sum(col("stock_quantity"))).show()
 
     inventory.createOrReplaceTempView("inventory")
