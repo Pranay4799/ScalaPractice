@@ -13,7 +13,6 @@ object Problem1 {
       val spark = SparkSession.builder()
         .config(spark_conf)
         .getOrCreate()
-
       import spark.implicits._
 
       val employees = List(
