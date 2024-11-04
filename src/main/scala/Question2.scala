@@ -3,7 +3,6 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, initcap, sum, when}
 
 object Question2 {
-
   def main(args:Array[String]):Unit=
   {
     val spark_conf = new SparkConf()
