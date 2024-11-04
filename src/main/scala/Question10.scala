@@ -33,5 +33,26 @@ object Question10 {
         .otherwise(0).alias("bonus"))
     category.groupBy("department").agg(sum(col("bonus"))).show()
 
+
+    employees.createOrReplaceTempView("employees")
+
+    val categorysql = spark.sql("""
+      select name, department,
+        case when performance_score >100 and department in ("Sales","Marketing") then 0.2
+        when performance_score >70  then 0.15
+        else 0 end as bonus
+        from employees
+      """)
+    categorysql.createOrReplaceTempView("categorysql")
+
+    spark.sql(
+      """
+       select department,
+       sum(bonus)
+       from
+       categorysql
+       group by department
+    """
+    ).show()
   }
 }
