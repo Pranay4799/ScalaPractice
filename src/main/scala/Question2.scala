@@ -42,7 +42,7 @@ object Question2 {
     val perf_status = spark.sql("""
       select initcap(name),total_sales,
         case when total_sales > 50000 then "Excellent"
-        when total_sales > 25000 and total_sales <=5000 then "Good"
+        when total_sales > 25000 and total_sales <=50000 then "Good"
         else "Needs Improvement"
         end as status
         from sales
