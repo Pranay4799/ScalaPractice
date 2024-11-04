@@ -30,13 +30,32 @@ object Question2 {
       ("aadil", 32000)
     ).toDF("name","total_sales")
 
-    val performance_status = sales.select(initcap(col("name")),col("total_sales"),
-      when(col("total_sales")>50000,"Excellent")
-        .when(col("total_sales")>25000 && col("total_sales")<=50000,"Good")
-        .otherwise("Needs Improvement").alias("status"))
-    performance_status.show()
+//    val performance_status = sales.select(initcap(col("name")),col("total_sales"),
+//      when(col("total_sales")>50000,"Excellent")
+//        .when(col("total_sales")>25000 && col("total_sales")<=50000,"Good")
+//        .otherwise("Needs Improvement").alias("status"))
+//    performance_status.show()
+//    performance_status.groupBy("status").agg(sum(col("total_sales"))).show()
 
-    performance_status.groupBy("status").agg(sum(col("total_sales"))).show()
+    sales.createOrReplaceTempView("sales")
+
+    val perf_status = spark.sql("""
+      select initcap(name),total_sales,
+        case when total_sales > 50000 then "Excellent"
+        when total_sales > 25000 and total_sales <=5000 then "Good"
+        else "Needs Improvement"
+        end as status
+        from sales
+      """)
+    perf_status.createOrReplaceTempView("perf_status")
+
+    perf_status.show()
+
+    spark.sql("""
+      select status,sum(total_sales) as total_sale
+        from perf_status
+        group by status
+      """).show()
 
   }
 
