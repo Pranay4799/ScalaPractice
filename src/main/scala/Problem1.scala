@@ -31,9 +31,15 @@ object Problem1 {
         ("aadil", "2024-11-04")
       ).toDF("name", "last_checkin")
 
-      val status = employees.select(initcap(col("name")),
+      val status1 = employees.select(initcap(col("name")),
                     when(datediff(current_date(),to_date(col("last_checkin")))<=7,"Active")
                       .otherwise("Inactive").alias("Status"))
-      status.show()
+
+      employees.createOrReplaceTempView("employees")
+
+      status1.show()
+      val status2 = spark.sql("select initcap(name),CASE WHEN datediff(current_date(),to_date(last_checkin))<=7 THEN 'Active' ELSE 'Inactive' END AS Status from employees")
+
+      status2.show()
     }
 }
