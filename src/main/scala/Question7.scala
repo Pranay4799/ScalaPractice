@@ -35,8 +35,17 @@ import spark.implicits._
       when(col("mileage")<25,"High Efficiency")
         .when(col("mileage")>=15 && col("mileage")<25,"Moderate Efficiency")
         .otherwise("Low Efficiency").alias("MileageGroup"))
-
     milegegroup.show()
+
+
+    vehicles.createOrReplaceTempView("vehicles")
+    spark.sql("""
+      select vehicle_name,
+        case when mileage >25 then "High Efficiency"
+        when mileage >= 15 and mileage < 25 then "Moderate Efficiency"
+        else "Low Efficiency" end as MileageGroup
+        from vehicles
+      """).show()
 
   }
 
