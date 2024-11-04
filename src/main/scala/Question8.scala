@@ -34,5 +34,27 @@ object Question8 {
 
     category.groupBy("category").agg(count(col("name"))).show()
 
+    students.createOrReplaceTempView("students")
+
+    val categorysql = spark.sql("""
+      select name,
+        case when score >90 then "Excellent"
+        when score >75 and score < 89 then "Good"
+        else "Needs Improvement" end as category
+        from students
+      """)
+    categorysql.createOrReplaceTempView("categorysql")
+
+    spark.sql(
+      """
+       select category,
+       count(name)
+       from
+       categorysql
+       group by category
+    """
+    ).show()
+
+
   }
 }
