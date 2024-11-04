@@ -36,6 +36,14 @@ object Question5 {
           .otherwise("No Overtime").alias("Status"))
       status1.show()
 
+      employees.createOrReplaceTempView("employees")
+      spark.sql("""
+      select name,
+        case when hours_worked >60 then "Excessive Overtime"
+        when hours_worked > 45 and hours_worked <= 60 then "Standard Overtime"
+        else "No Overtime" end as status
+        from employees
+      """).show()
     }
 
 }
