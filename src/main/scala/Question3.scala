@@ -41,7 +41,39 @@ object Question3 {
 
     workloadstatus.groupBy("loadstatus").agg(count(col("name"))).show
 
-  }
 
+    workload.createOrReplaceTempView("workload")
+
+    val workloadbyempsql = spark.sql("""
+      select initcap(name) as name,
+      sum(hours) as total_hours
+        from workload
+        group by name
+      """)
+    workloadbyempsql.createOrReplaceTempView("workloadbyempsql")
+
+    val categorycategorysql = spark.sql("""
+      select name,
+        case when total_hours >200 then "Overloaded"
+        when total_hours > 100 and total_hours <= 200 then "Balanced"
+        else "Underutilized" end as loadstatus
+        from workloadbyempsql
+      """)
+    categorycategorysql.createOrReplaceTempView("categorycategorysql")
+
+  spark.sql(
+    """
+       select loadstatus,
+       count(name)
+       from
+       categorycategorysql
+       group by loadstatus
+    """
+  ).show()
+
+
+
+
+  }
 
 }
