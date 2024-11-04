@@ -32,10 +32,29 @@ object Question6 {
       when(col("age")<25,"Youth")
         .when(col("age")>=25 && col("age")<45,"Adult")
         .otherwise("Senior").alias("Group"))
-
-    group.show()
-
    group.groupBy("Group").agg(count(col("name"))).show()
+
+    customers.createOrReplaceTempView("customers")
+
+    val groupsql = spark.sql("""
+      select name,
+        case when age <25 then "Youth"
+        when age >= 25 and age < 45 then "Adult"
+        else "Senior" end as Group
+        from customers
+      """)
+    groupsql.createOrReplaceTempView("groupsql")
+
+    spark.sql(
+      """
+       select Group,
+       count(name)
+       from
+       groupsql
+       group by Group
+    """
+    ).show()
+
 
   }
 }
