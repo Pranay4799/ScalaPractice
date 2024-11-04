@@ -37,5 +37,28 @@ object Question9 {
 
     category.groupBy("category").agg(sum(col("stock_quantity"))).show()
 
+    inventory.createOrReplaceTempView("inventory")
+
+    val categorysql = spark.sql("""
+      select product_name, stock_quantity,
+        case when stock_quantity >100 then "Excellent"
+        when stock_quantity >50 and stock_quantity < 100 then "Normal"
+        else "Low Stock" end as category
+        from inventory
+      """)
+    categorysql.createOrReplaceTempView("categorysql")
+
+    spark.sql(
+      """
+       select category,
+       sum(stock_quantity)
+       from
+       categorysql
+       group by category
+    """
+    ).show()
+
+
+
   }
 }
