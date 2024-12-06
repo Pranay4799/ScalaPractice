@@ -15,7 +15,6 @@ object S3Q1 {
       .getOrCreate()
 
     import spark.implicits._
-
     val d1 = Seq(("2024-01-15"), ("2024-02-20"), ("2024-03-25")).toDF("date")
     //dayofmonth
     d1.withColumn("month",dayofmonth(col("date"))).show()
